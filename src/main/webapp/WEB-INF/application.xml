@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="service" name="3" class="HelloService">
+        <constructor-arg name="name" type="java.lang.String" value="ServTest"/>
+        <constructor-arg name="id" type="java.lang.Integer" value="10"/>
+        <constructor-arg name="boxList" type="java.util.List">
+            <list>
+                <value>123</value>
+                <value>333</value>
+            </list>
+        </constructor-arg>
+        <constructor-arg name="service" type="WeatherService" ref="weatherService"/>
+    </bean>
+
+    <bean id="weatherService" class="WeatherService">
+        <constructor-arg name="id" type="java.lang.Integer" value="5"/>
+        <constructor-arg name="name" type="java.lang.String" value="RtService"/>
+    </bean>
+
+
+
+
+
+
+</beans>
