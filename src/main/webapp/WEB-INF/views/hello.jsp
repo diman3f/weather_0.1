@@ -1,11 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html>
-<head>
-    <title>Hello World</title>
-</head>
-<body>
-<h1>Hello, World!</h1>
-<p>The time is: <%= new java.util.Date() %></p>
-</body>
-</html>
+
+<title>StartPage-Weather</title>
+<form action="register" method="post">
+    <label for="Login">Add login for registration</label>
+    <input id="Login" type="text" name="login" />
+    <label for="Password">Add password</label>
+    <input id="Password" type="text" name="password" />
+    <input type="submit" value="Save" />
+</form>
