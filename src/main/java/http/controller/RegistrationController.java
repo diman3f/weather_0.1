@@ -18,11 +18,6 @@ public class RegistrationController {
         return "redirect:" + url;
     }
 
-    @RequestMapping(value = "/sign-in", method = RequestMethod.GET)
-    public ModelAndView signIn(ModelAndView model) {
-        model.setViewName("sign-in");
-        return model;
-    }
 
 
 
