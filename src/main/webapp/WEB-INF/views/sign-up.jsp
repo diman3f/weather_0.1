@@ -19,7 +19,7 @@
 
     <div class="row justify-content-center">
         <div class="col-12 col-lg-4 col-md-6 col-sm-12">
-            <form action= "register"  method="post" class="mt-4">
+            <form action= "${pageContext.request.contextPath}/register"  method="post" class="mt-4">
                 <div class="mb-3">
                     <label for="username" class="form-label">Username</label>
                     <input type="text" class="form-control" id="username" name="username" required value=""/>
@@ -35,7 +35,7 @@
 
                 <input type="hidden" name="redirect_to" value="${pageContext.request.contextPath}/home"/>
                 <button type="submit" class="btn btn-primary w-100 mt-3">Sign Up</button>
-                <p class="mt-2 text-center">Already have an account? <a href="${pageContext.request.contextPath}/sign-in">Sign in here</a></p>
+                <p class="mt-2 text-center">Already have an account? <a href="${pageContext.request.contextPath}/signInOpen">Sign in here</a></p>
             </form>
         </div>
     </div>

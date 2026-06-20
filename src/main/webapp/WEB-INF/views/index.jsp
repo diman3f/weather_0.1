@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,9 +17,9 @@
             Weather Tracker
         </a>
         <div class="d-flex align-items-center">
-            <span class="navbar-text me-3">zhukovsd</span>
+            <span class="navbar-text me-3">${requestScope.user.name}</span>
 
-            <form action="${pageContext.request.contextPath}/logout" method="get" >
+            <form action="" method="get" >
             <button class="btn btn-outline-danger">Sign out</button>
             </form>
         </div>
