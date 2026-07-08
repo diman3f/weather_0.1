@@ -5,6 +5,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import entity.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.orm.jpa.hibernate.LocalSessionFactoryBean;
@@ -21,7 +22,7 @@ public class HibernateConfig {
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl("jdbc:postgresql://localhost:5432/postgres");
         config.setUsername("postgres");
-        config.setPassword("admin"); //todo 04.07 эти данные необходимо вынести во внешний источник 
+        config.setPassword("admin"); //todo 04.07 эти данные необходимо вынести во внешний источник
         config.setDriverClassName("org.postgresql.Driver");
 
         config.addDataSourceProperty("cachePrepStmts", "true");
