@@ -28,7 +28,7 @@ public class AuthController {
         final AuthUserDto authUser = service.auth(new UserReadDto(1L, name));
 
         modelAndView.setViewName("index");
-        modelAndView.addObject("user",authUser);
+        modelAndView.addObject("userAuth",authUser);
         return modelAndView;
 
     }

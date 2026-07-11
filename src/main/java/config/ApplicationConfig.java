@@ -8,6 +8,7 @@ import org.springframework.context.annotation.PropertySource;
 @PropertySource("classpath:application.properties")
 @ComponentScan("controller")
 @ComponentScan("service")
+@ComponentScan("dao")
 public class ApplicationConfig {
 
 

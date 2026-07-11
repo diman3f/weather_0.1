@@ -14,7 +14,7 @@
     <div class="container-fluid">
         <a class="navbar-brand" href="#">
             <img src="images/weather-app.png" alt="" width="30" height="24" class="d-inline-block align-text-top">
-            Weather Tracker ${requestScope.user.authOK}
+            Weather Tracker ${requestScope.userAuth.getId()}
         </a>
         <div class="d-flex align-items-center">
             <span class="navbar-text me-3">${requestScope.user.name}</span>

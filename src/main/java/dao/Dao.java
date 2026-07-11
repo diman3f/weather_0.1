@@ -1,9 +1,15 @@
 package dao;
 
-public interface Dao<E extends > {
+import entity.BaseEntity;
+
+import java.io.Serializable;
+import java.util.Optional;
+
+public interface Dao<K extends Serializable, E extends BaseEntity<K>> {
 
     E save(E entity);
-    E update(K key);
-    E findById(K key);
+    void delete(E entity);
+    void update(E entity);
+    Optional<E> findById (K key);
 
 }
