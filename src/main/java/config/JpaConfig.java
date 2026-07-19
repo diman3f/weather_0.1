@@ -49,10 +49,8 @@ public class JpaConfig {
     public Properties addantionalProperties() {
         final Properties properties = new Properties();
         properties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
-        properties.setProperty("hibernate.hbm2ddl.auto", "none");
+        properties.setProperty("hibernate.hbm2ddl.auto", "validate");
         return properties;
-        //  hibernate.show_sql=true
-        // hibernate.format_sql=true
     }
 
     @Bean
