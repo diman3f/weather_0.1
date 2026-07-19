@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "Users")
 
-public class User implements BaseEntity<Long>{
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,7 +34,5 @@ public class User implements BaseEntity<Long>{
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+
 }
