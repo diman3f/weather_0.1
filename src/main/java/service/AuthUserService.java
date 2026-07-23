@@ -22,10 +22,10 @@ public class AuthUserService {
 
     public AuthUserDto auth(UserReadDto user) {
         final String database = flyway.migrate().schemaName;
-        User userAuth = new User(user.getName());
+        User userAuth = new User(user.getName(), user.getPassword());
 
         repository.save(userAuth);
-        return new AuthUserDto(userAuth.getId(), userAuth.getLogin(),"OK");
+        return new AuthUserDto(userAuth.getId(), userAuth.getLogin(), "OK");
 
     }
 }

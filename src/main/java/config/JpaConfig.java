@@ -49,7 +49,7 @@ public class JpaConfig {
     public Properties addantionalProperties() {
         final Properties properties = new Properties();
         properties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
-        properties.setProperty("hibernate.hbm2ddl.auto", "validate");
+        properties.setProperty("hibernate.hbm2ddl.auto", "none");
         return properties;
     }
 

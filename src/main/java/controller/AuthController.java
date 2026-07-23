@@ -25,7 +25,7 @@ public class AuthController {
     public ModelAndView signIn(@RequestParam("username") String name, @RequestParam("password") String password,
                          @RequestParam("redirect_to") String url, ModelAndView modelAndView) {
 
-        final AuthUserDto authUser = service.auth(new UserReadDto(1L, name));
+        final AuthUserDto authUser = service.auth(new UserReadDto(name, password));
 
         modelAndView.setViewName("index");
         modelAndView.addObject("userAuth",authUser);

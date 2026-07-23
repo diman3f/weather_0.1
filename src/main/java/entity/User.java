@@ -1,38 +1,35 @@
 package entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Entity
-@Table(name = "Users")
-
+@Table(name = "users", indexes = @Index(columnList = "login"))
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
+    @Column(name = "login")
     private String login;
+    @Column(name = "password")
     private String password; // по тз нельзя хранить пароль в открытом виде нужно использовать
     // BCrypt
+    @OneToMany(mappedBy = "userLocation")
+    private List<Location> locations;
 
-    protected User() {
-    }
+    @OneToMany(mappedBy = "userSession")
+    private List<Session> sessions;
 
-    public User(String login) {
+    public User(String login, String password) {
         this.id = null;
         this.login = login;
-        this.password = "secret";
+        this.password = password;
     }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-
 }
