@@ -13,7 +13,7 @@ public class WeatherAppContext implements WebApplicationInitializer {
     public void onStartup(ServletContext servletContext) throws ServletException {
 
         AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
-        context.register(ApplicationConfig.class, JpaConfig.class, FlyWayConfig.class);
+        context.register(ApplicationConfig.class, JpaConfig.class);
         servletContext.addListener(new ContextLoaderListener(context));
 
         AnnotationConfigWebApplicationContext dispatcherContext = new AnnotationConfigWebApplicationContext();

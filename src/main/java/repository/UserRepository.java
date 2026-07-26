@@ -29,7 +29,6 @@ public class UserRepository implements Repository<Long, User> {
         entityManager.remove(user);
     }
 
-
     @Override
     public void update(User entity) {
 

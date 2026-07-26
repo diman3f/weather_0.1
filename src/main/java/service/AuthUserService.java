@@ -21,7 +21,7 @@ public class AuthUserService {
     }
 
     public AuthUserDto auth(UserReadDto user) {
-        final String database = flyway.migrate().schemaName;
+
         User userAuth = new User(user.getName(), user.getPassword());
 
         repository.save(userAuth);

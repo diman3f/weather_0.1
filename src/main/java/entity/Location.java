@@ -1,16 +1,23 @@
 package entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
-@Table(name = "location",
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+@Table(name = "locations",
         uniqueConstraints = {
                 @UniqueConstraint(
                         name = "uniq_lat_lon",
                         columnNames = {"latitude", "longitude"})},
         indexes = @Index(name = "ind_user", columnList = "user_id"))
+
 public class Location {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,11 +25,13 @@ public class Location {
     @Column(nullable = false, length = 50)
     private String name;
     @Column(nullable = false)
-    private BigDecimal latitude;
+    private Double latitude;
     @Column(nullable = false)
-    private BigDecimal longitude;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name ="user_id", nullable = false)
-    private User userLocation;
-
+    private Double longitude;
+    @ManyToMany
+    @JoinTable(
+            name = "users_locations",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "location_id"))
+    List<User> users;
 }

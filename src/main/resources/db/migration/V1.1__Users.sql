@@ -1,4 +1,4 @@
-CREATE TABLE Users
+CREATE TABLE users
 (
     id       bigserial PRIMARY KEY,
     login    VARCHAR(50) UNIQUE NOT NULL,

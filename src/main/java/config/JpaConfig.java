@@ -2,6 +2,9 @@ package config;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.flywaydb.core.Flyway;
+import org.flywaydb.core.api.configuration.FluentConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
@@ -34,12 +37,23 @@ public class JpaConfig {
         return new HikariDataSource(config);
     }
 
+
+    @Bean
+    public Flyway flyway() {
+        final FluentConfiguration configure = Flyway.configure();
+        configure.dataSource(hikariDataSource() ).load();
+        configure.schemas("public");
+        return new Flyway(configure);
+    }
+
+
+
     @Bean
     public LocalContainerEntityManagerFactoryBean localEntityManagerFactoryBean() {
         final LocalContainerEntityManagerFactoryBean localFactoryManager = new LocalContainerEntityManagerFactoryBean();
+        flyway().migrate();
         localFactoryManager.setDataSource(hikariDataSource());
         localFactoryManager.setPackagesToScan("entity");
-
         JpaVendorAdapter hibernateAdapter = new HibernateJpaVendorAdapter();
         localFactoryManager.setJpaVendorAdapter(hibernateAdapter);
         localFactoryManager.setJpaProperties(addantionalProperties());
@@ -49,7 +63,7 @@ public class JpaConfig {
     public Properties addantionalProperties() {
         final Properties properties = new Properties();
         properties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
-        properties.setProperty("hibernate.hbm2ddl.auto", "none");
+        properties.setProperty("hibernate.hbm2ddl.auto", "validate");
         return properties;
     }
 
@@ -57,6 +71,8 @@ public class JpaConfig {
     public PersistenceExceptionTranslationPostProcessor postProcessor() {
        return new PersistenceExceptionTranslationPostProcessor();
     }
+
+
 
 
     @Bean

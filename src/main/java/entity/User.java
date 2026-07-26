@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+
 @Entity
 @Table(name = "users", indexes = @Index(columnList = "login"))
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -21,10 +22,10 @@ public class User {
     @Column(name = "password")
     private String password; // по тз нельзя хранить пароль в открытом виде нужно использовать
     // BCrypt
-    @OneToMany(mappedBy = "userLocation")
+    @ManyToMany(mappedBy = "users")
     private List<Location> locations;
 
-    @OneToMany(mappedBy = "userSession")
+    @OneToMany(mappedBy = "user")
     private List<Session> sessions;
 
     public User(String login, String password) {
