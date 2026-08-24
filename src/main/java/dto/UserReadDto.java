@@ -8,9 +8,7 @@ public class UserReadDto {
     private String password;
 
     public UserReadDto(String name, String password) {
-
         this.name = name;
         this.password = password;
     }
-
 }

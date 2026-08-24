@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.beans.ConstructorProperties;
 import java.util.List;
 
 
@@ -28,6 +29,7 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Session> sessions;
 
+    @ConstructorProperties({"login", "password"})
     public User(String login, String password) {
         this.id = null;
         this.login = login;

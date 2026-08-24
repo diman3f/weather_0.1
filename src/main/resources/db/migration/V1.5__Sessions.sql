@@ -1,0 +1,3 @@
+ALTER TABLE sessions
+ALTER COLUMN expires_At TYPE TIMESTAMP
+        USING CURRENT_DATE + expires_At;
