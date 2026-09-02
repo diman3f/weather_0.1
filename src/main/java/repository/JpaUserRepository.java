@@ -3,22 +3,20 @@ package repository;
 import entity.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
-import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
 
 @Component
-public class UserRepositoryImp implements Repository<Long, User>, UserRepository {
+public class JpaUserRepository implements UserRepository {
 
     @PersistenceContext
     private final EntityManager entityManager;
     private final String hql = "FROM User WHERE login = :login";
 
-    public UserRepositoryImp(EntityManager entityManager) {
+    public JpaUserRepository(EntityManager entityManager) {
         this.entityManager = entityManager;
 
     }
