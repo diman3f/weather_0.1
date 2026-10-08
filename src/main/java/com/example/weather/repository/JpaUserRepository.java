@@ -16,6 +16,7 @@ public class JpaUserRepository implements UserRepository {
     private final EntityManager entityManager;
     private final String hql = "FROM User WHERE login = :login";
 
+
     public JpaUserRepository(EntityManager entityManager) {
         this.entityManager = entityManager;
 
@@ -39,6 +40,7 @@ public class JpaUserRepository implements UserRepository {
 
     @Override
     public Optional<User> findById(Long key) {
+
         return Optional.empty();
     }
 

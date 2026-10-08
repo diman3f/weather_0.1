@@ -4,6 +4,15 @@ import com.example.weather.config.ApplicationConfig;
 import com.example.weather.config.FlyWayConfig;
 import com.example.weather.config.JpaConfig;
 import com.example.weather.config.WebConfig;
+import com.example.weather.dto.RegisterUserRequest;
+import com.example.weather.dto.RegisterUserResponse;
+import com.example.weather.entity.User;
+import com.example.weather.repository.JpaUserRepository;
+import com.example.weather.repository.UserRepository;
+import com.example.weather.service.JbCryptPasswordGenerator;
+import com.example.weather.service.RegistrationService;
+import com.example.weather.service.ResourceLoader;
+import com.example.weather.service.UserRegistrationService;
 import jakarta.servlet.ServletContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +31,8 @@ import org.springframework.transaction.annotation.RollbackOn;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.util.Optional;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -34,6 +45,12 @@ public class RegistrationControllerIntTest {
     private WebApplicationContext webApplicationContext;
     private MockMvc mockMvc;
 
+    @Autowired
+    private RegistrationService service;
+    @Autowired
+    private UserRepository repository;
+    @Autowired
+    private JbCryptPasswordGenerator passwordGenerator;
 
     //бизнес действие регистрация пользователя
 
@@ -44,10 +61,12 @@ public class RegistrationControllerIntTest {
     // репозиторий выполняет сохраняет сущность
     // репозиторий отправляет entity c присвоенным id
 
-    //возможные сценарии теста
+    // возможные сценарии теста
     // данные логин не повторяется - успешная регистрация
     // логин уже есть в бд - ошибка регистрации изменения системы нет
     // репозиторий не доступен - ошибка регистрации
+
+    //
 
 
     @BeforeEach
@@ -55,9 +74,32 @@ public class RegistrationControllerIntTest {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
     }
 
+
+    @Test
+    @Transactional
+    public void givenUserRequestWhenRegisterThatReturnUserEntity() {
+
+        RegisterUserRequest dto = new RegisterUserRequest("IvanК", "qwer123");
+
+        final RegisterUserResponse register = service.register(dto);
+
+        final Optional<User> user = repository.findByLoginUser(register.username());
+        Assertions.assertTrue(user.isPresent());
+        final String hash = user.get().getPassword();
+        Assertions.assertTrue(passwordGenerator.checkPassword(dto.password(), hash));
+        Assertions.assertEquals(user.get().getLogin(), register.username());
+
+    }
+
+
     @Test
     public void givenGetNameController_WhenMockMvcReturnNameController() {
+        ResourceLoader loader = new ResourceLoader();
+
         final ServletContext servletContext = webApplicationContext.getServletContext();
+        final String s = loader.get();
+
+        Assertions.assertNotNull(s);
         Assertions.assertNotNull(servletContext);
 
     }
@@ -85,7 +127,6 @@ public class RegistrationControllerIntTest {
     }
 
 
-
     @Test
     @Transactional
     public void handlerRegisterUser_ReturnsValidResponseUserDto() {
@@ -97,16 +138,14 @@ public class RegistrationControllerIntTest {
 
         try {
             final ResultActions perform = mockMvc.perform(post("/register")
-                    .param("username", name)
-                    .param("password", password)
-                    .param("redirect_to", redirect_to))
+                            .param("username", name)
+                            .param("password", password)
+                            .param("redirect_to", redirect_to))
                     .andExpect(status().isFound())
                     .andExpect(redirectedUrl("/index"));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
-
 
 
     }
