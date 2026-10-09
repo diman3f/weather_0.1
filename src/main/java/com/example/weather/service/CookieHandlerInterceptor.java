@@ -27,10 +27,10 @@ public class CookieHandlerInterceptor {
         final Optional<UUID> uuid = getUuid(request);
         if (uuid.isPresent()) {
             try {
-                request.setAttribute("uuid", String.valueOf(uuid.get()));
+//                request.setAttribute("uuid", String.valueOf(uuid.get()));
                 final Session validSession = service.getValidSession(uuid.get());
-                System.out.println(String.format("Cookies равен %s", String.valueOf(uuid.get())));
-                request.setAttribute("user", new User("ivan", "123"));
+//                System.out.println(String.format("Cookies равен %s", String.valueOf(uuid.get())));
+//                request.setAttribute("user", new User("ivan", "123"));
                 request.setAttribute("hello", String.format("The session expires at %d, minutes %d",
                         validSession.getExpiresAt().getHour(), validSession.getExpiresAt().getMinute()));
                 final Session prolongate = service.prolongate(validSession);

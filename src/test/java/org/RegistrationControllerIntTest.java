@@ -7,13 +7,13 @@ import com.example.weather.config.WebConfig;
 import com.example.weather.dto.RegisterUserRequest;
 import com.example.weather.dto.RegisterUserResponse;
 import com.example.weather.entity.User;
-import com.example.weather.repository.JpaUserRepository;
+import com.example.weather.exception.DataBaseException;
 import com.example.weather.repository.UserRepository;
 import com.example.weather.service.JbCryptPasswordGenerator;
 import com.example.weather.service.RegistrationService;
 import com.example.weather.service.ResourceLoader;
-import com.example.weather.service.UserRegistrationService;
 import jakarta.servlet.ServletContext;
+import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.transaction.annotation.RollbackOn;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -77,7 +76,7 @@ public class RegistrationControllerIntTest {
 
     @Test
     @Transactional
-    public void givenUserRequestWhenRegisterThatReturnUserEntity() {
+    public void givenUserRequestWhenRegisterThenReturnUserEntity() {
 
         RegisterUserRequest dto = new RegisterUserRequest("IvanК", "qwer123");
 
@@ -88,6 +87,19 @@ public class RegistrationControllerIntTest {
         final String hash = user.get().getPassword();
         Assertions.assertTrue(passwordGenerator.checkPassword(dto.password(), hash));
         Assertions.assertEquals(user.get().getLogin(), register.username());
+
+    }
+
+    @Test
+    public void givenUserCreateRepositoryWhenRegisterUser_ThenConstraintViolationException() {
+        RegisterUserRequest dto = new RegisterUserRequest("IvanК", "qwer123");
+
+        Exception exception = Assertions.assertThrows(DataBaseException.class, () -> service.register(dto));
+
+        String expectedMessage = "Failed to save user due to constraint violation";
+        String actualMessage = exception.getMessage();
+
+        Assertions.assertTrue(actualMessage.contains(expectedMessage));
 
     }
 

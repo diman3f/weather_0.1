@@ -2,7 +2,7 @@ package com.example.weather.service;
 
 import org.mindrot.jbcrypt.BCrypt;
 
-public class JbCryptPasswordGenerator implements PasswordEncode {
+public class JbCryptPasswordGenerator implements PasswordEncoder {
     private static final int WORK_LOAD = 10;
 
     @Override

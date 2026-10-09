@@ -42,15 +42,15 @@ public class JpaConfig {
     public Flyway flyway() {
         final FluentConfiguration configure = Flyway.configure();
         configure.dataSource(hikariDataSource()).load();
-        configure.schemas("public");
+        configure.schemas("test_schema");
         return new Flyway(configure);
     }
 
-//
+    //
     @Bean
     public LocalContainerEntityManagerFactoryBean localEntityManagerFactoryBean() {
         final LocalContainerEntityManagerFactoryBean localFactoryManager = new LocalContainerEntityManagerFactoryBean();
-//        flyway().migrate();
+        flyway().migrate();
         localFactoryManager.setDataSource(hikariDataSource());
         localFactoryManager.setPackagesToScan("com/example/weather/entity");
         JpaVendorAdapter hibernateAdapter = new HibernateJpaVendorAdapter();
