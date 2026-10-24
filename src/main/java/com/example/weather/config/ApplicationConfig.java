@@ -1,5 +1,6 @@
 package com.example.weather.config;
 
+import com.example.weather.service.AuthenticationCookieBuilder;
 import com.example.weather.service.JbCryptPasswordGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -15,8 +16,13 @@ import org.springframework.context.annotation.PropertySource;
 public class ApplicationConfig {
 
     @Bean
-    public JbCryptPasswordGenerator passwordGenerator(){
+    public JbCryptPasswordGenerator passwordGenerator() {
         return new JbCryptPasswordGenerator();
+    }
+
+    @Bean
+    AuthenticationCookieBuilder cookieBuilder() {
+        return new AuthenticationCookieBuilder();
     }
 
 }
