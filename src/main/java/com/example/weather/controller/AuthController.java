@@ -1,48 +1,44 @@
 package com.example.weather.controller;
 
+import com.example.weather.dto.AuthUserRequest;
 import com.example.weather.dto.AuthUserResponse;
-import com.example.weather.exception.SessionExpiredException;
-import jakarta.servlet.http.Cookie;
+import com.example.weather.service.AuthUserService;
+import com.example.weather.service.AuthenticationCookieBuilder;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import com.example.weather.service.AuthUserService;
+import org.springframework.web.servlet.view.RedirectView;
+
 import java.util.UUID;
 
 @Controller
 public class AuthController {
     private final AuthUserService service;
+    private final AuthenticationCookieBuilder cookieBuilder;
 
-    public AuthController(AuthUserService service) {
+    public AuthController(AuthUserService service, AuthenticationCookieBuilder cookieBuilder) {
         this.service = service;
+        this.cookieBuilder = cookieBuilder;
     }
-    @RequestMapping(value = "/signIn", method = RequestMethod.POST)
-    public String signIn(@RequestParam("username") String name, @RequestParam("password") String password,
-                         @RequestParam("redirect_to") String url, Model model, HttpServletResponse response) {
-        final AuthUserResponse authUserResponse = service.authenticateUser(name, password);
-        final Cookie cookie = new Cookie("uuid", String.valueOf(authUserResponse.idUserSession()));
-        cookie.setMaxAge(30 * 30);
-        cookie.setHttpOnly(true);
-        response.addCookie(cookie);
-        System.out.println("hello");
-        model.addAttribute(authUserResponse);
-        if (!cookie.getValue().equals("12")) {
-                throw new SessionExpiredException("test");
-            }
-        return "redirect:index";
+
+    @GetMapping(value = "/signIn")
+    public ModelAndView openSignIn() {
+        return new ModelAndView("sign-in");
+    }
+
+    @PostMapping(value = "/signIn")
+    public ModelAndView signIn(@ModelAttribute AuthUserRequest dto, @RequestParam("redirect_to") String redirect_to, HttpServletResponse response) {
+        final AuthUserResponse authUserResponse = service.authenticateUser(dto.username(), dto.password());
+        if (authUserResponse.uuidSession() != null)
+            cookieBuilder.setCookieResponse(response, authUserResponse.uuidSession(), "uuid");
+        return new ModelAndView(new RedirectView(redirect_to));
     }
 
     @ModelAttribute
     public void addAttributes(Model model) {
         model.addAttribute("msg", "Welcome to the Netherlands!");
-    }
-
-    @RequestMapping(value = "/signInOpen")
-    public ModelAndView openSignIn(ModelAndView modelAndView) {
-        modelAndView.setViewName("sign-in");
-        return modelAndView;
     }
 
     @RequestMapping(value = "/logout")
@@ -52,5 +48,4 @@ public class AuthController {
         modelAndView.setViewName("sign-in");
         return modelAndView;
     }
-
 }
