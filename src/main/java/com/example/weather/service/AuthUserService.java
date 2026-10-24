@@ -21,15 +21,15 @@ import java.util.UUID;
 @Slf4j
 public class AuthUserService {
 
-    private final Repository<Long, User> repository;
     private final UserRepository userRepository;
     private final SessionService sessionService;
+    private final JbCryptPasswordGenerator passwordGenerator;
 
 
-    public AuthUserService(JpaUserRepository repository, SessionService sessionService) {
-        this.repository = repository;
+    public AuthUserService(JpaUserRepository repository, SessionService sessionService, JbCryptPasswordGenerator passwordGenerator) {
         this.userRepository = repository;
         this.sessionService = sessionService;
+        this.passwordGenerator = passwordGenerator;
 
     }
 
@@ -43,15 +43,15 @@ public class AuthUserService {
         if (entity.isPresent()) {
 
             final User user = entity.get();
-            if (BCrypt.checkpw(password, user.getPassword())) {
-                final Session session = sessionService.create(user);
-            return new AuthUserResponse(user.getId(), user.getLogin(), session.getId());
-        } else {
+            if (passwordGenerator.checkPassword(password, user.getPassword())) {
+                final Session session = sessionService.create(String.valueOf(user.getId()));
+                return new AuthUserResponse(user.getId(), user.getLogin(), session.getId());
+            } else {
                 log.error("Not correct password");
                 throw new AuthenticationCredentialsNotFoundException(String.format("User %s do not register", login), login);
             }
         }
-            // на сервеной части нужно кидать конктретные исключения на логин или пароль
+        // на сервеной части нужно кидать конктретные исключения на логин или пароль
         throw new AuthenticationCredentialsNotFoundException(String.format("User %s do not register", login), login);
     }
 
