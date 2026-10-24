@@ -4,16 +4,14 @@ import com.example.weather.config.ApplicationConfig;
 import com.example.weather.config.FlyWayConfig;
 import com.example.weather.config.JpaConfig;
 import com.example.weather.config.WebConfig;
+import com.example.weather.dto.AuthUserResponse;
 import com.example.weather.dto.RegisterUserRequest;
 import com.example.weather.dto.RegisterUserResponse;
 import com.example.weather.entity.User;
 import com.example.weather.exception.DataBaseException;
 import com.example.weather.repository.UserRepository;
-import com.example.weather.service.JbCryptPasswordGenerator;
-import com.example.weather.service.RegistrationService;
-import com.example.weather.service.ResourceLoader;
+import com.example.weather.service.*;
 import jakarta.servlet.ServletContext;
-import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,6 +21,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -32,8 +31,8 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Optional;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
@@ -50,6 +49,10 @@ public class RegistrationControllerIntTest {
     private UserRepository repository;
     @Autowired
     private JbCryptPasswordGenerator passwordGenerator;
+    @Autowired
+    private SessionService sessionService;
+    @Autowired
+    private AuthUserService authUserService;
 
     //бизнес действие регистрация пользователя
 
@@ -78,7 +81,7 @@ public class RegistrationControllerIntTest {
     @Transactional
     public void givenUserRequestWhenRegisterThenReturnUserEntity() {
 
-        RegisterUserRequest dto = new RegisterUserRequest("IvanК", "qwer123");
+        RegisterUserRequest dto = new RegisterUserRequest("IvanК", "qwer123", "qwer123");
 
         final RegisterUserResponse register = service.register(dto);
 
@@ -92,7 +95,7 @@ public class RegistrationControllerIntTest {
 
     @Test
     public void givenUserCreateRepositoryWhenRegisterUser_ThenConstraintViolationException() {
-        RegisterUserRequest dto = new RegisterUserRequest("IvanК", "qwer123");
+        RegisterUserRequest dto = new RegisterUserRequest("IvanК", "qwer123", "qwer123");
 
         Exception exception = Assertions.assertThrows(DataBaseException.class, () -> service.register(dto));
 
@@ -113,8 +116,8 @@ public class RegistrationControllerIntTest {
 
         Assertions.assertNotNull(s);
         Assertions.assertNotNull(servletContext);
-
     }
+
 
     @Test
     public void givenHomePageURI_whenMockMVC_thenReturnsIndexJSPViewName() {
@@ -143,9 +146,9 @@ public class RegistrationControllerIntTest {
     @Transactional
     public void handlerRegisterUser_ReturnsValidResponseUserDto() {
         // given
-        String name = "UserReg33334";
+        String name = "UserReg335677";
         String password = "somepassword123334";
-        String redirect_to = "/index";
+        String redirect_to = "/signIn";
 
 
         try {
@@ -154,12 +157,107 @@ public class RegistrationControllerIntTest {
                             .param("password", password)
                             .param("redirect_to", redirect_to))
                     .andExpect(status().isFound())
+                    .andExpect(redirectedUrl("/signIn"));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void givenUserLoginAndPassword_WhenSendPostRequestRegistration_ThenCreateSessionWithUserId() {
+        // подготовка mock mvc uri и параметры
+        // получить сессию
+        // проверить в сессии юзер id
+        String name = "UserReg5dada65";
+        String password = "somepassw4313";
+        String redirect_to = "/index";
+
+        try {
+            final ResultActions perform = mockMvc.perform(post("/signUp")
+                    .param("username", name)
+                    .param("password", password)
+                    .param("redirect_to", redirect_to));
+
+            final AuthUserResponse authUserResponse = authUserService.authenticateUser(name, password);
+            Assertions.assertNotNull(authUserResponse);
+            Assertions.assertEquals(authUserResponse.name(),name);
+
+            final Optional<User> byLoginUser = repository.findByLoginUser(name);
+
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public void givenIdUser_whenAddCookieInPostHandle_thenRequestWithCookieIdUser() {
+        String name = "UserReg554";
+        String password = "somepassword2334";
+        String redirect_to = "/index";
+
+        try {
+            final ResultActions perform = mockMvc.perform(post("/register")
+                            .param("username", name)
+                            .param("password", password)
+                            .param("redirect_to", redirect_to))
                     .andExpect(redirectedUrl("/index"));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
-
     }
 
+    @Test
+    public void shouldReturnRegistrationPage() {
+        try {
+            mockMvc.perform(get("/signIn"))
+                    .andExpect(view().name("sign-up"))
+                    .andExpect(status().isOk());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void shouldReturnValidModelDto() {
+        //given
+        String username = "UserReg5dada59";
+        String password = "prosto2";
+        String repeatPassword = "prosto2";
+        try {
+            mockMvc.perform(post("/register")
+                    .param("username", username)
+                    .param("password", password)
+                    .param("repeatPassword", repeatPassword)
+            );
+
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void shouldSetCookieResponseWhenValidLoginAndPassword() {
+        String username = "UserReg5dada59";
+        String password = "somepassw4311";
+        String redirect_to = "/index";
+
+        try {
+            final MvcResult mvcResult = mockMvc.perform(post("/signIn")
+                            .param("username", username)
+                            .param("password", password)
+                            .param("redirect_to", redirect_to))
+                    .andExpect(redirectedUrl(redirect_to))
+                    .andReturn();
+
+            Assertions.assertNotNull(mvcResult.getResponse().getCookie("uuid"));
+            Assertions.assertNotNull(mvcResult.getModelAndView());
+            Assertions.assertEquals(mvcResult.getResponse().getStatus(), 302);
+
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
