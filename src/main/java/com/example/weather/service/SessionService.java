@@ -2,7 +2,9 @@ package com.example.weather.service;
 
 import com.example.weather.entity.Session;
 import com.example.weather.entity.User;
+import com.example.weather.exception.DataBaseException;
 import com.example.weather.exception.SessionExpiredException;
+import com.example.weather.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,18 +22,25 @@ import java.util.UUID;
 public class SessionService {
     private static final Logger log = LoggerFactory.getLogger(SessionService.class);
     private final SessionUpdateRepository sessionRepository;
+    private final UserRepository userRepository;
     private static final Integer PROLONGATION_HOURS = 1;
     private static final Integer PROLONGATION_MINUTES = 10;
 
 
-    public SessionService(SessionRepository sessionRepository) {
+    public SessionService(SessionRepository sessionRepository, UserRepository userRepository) {
         this.sessionRepository = sessionRepository;
+        this.userRepository = userRepository;
     }
 
-    public Session create(User user) {
+    @Transactional
+    public Session create(String idUser) {
         UUID uuid = generate();
-        final Session session = new Session(uuid, user, LocalDateTime.now().plusHours(PROLONGATION_HOURS));
-        return save(session);
+        final Optional<User> byIdUser = userRepository.findByIdUser(idUser);
+        if(byIdUser.isPresent()) {
+            final Session session = new Session(uuid, byIdUser.get(), LocalDateTime.now().plusHours(PROLONGATION_HOURS));
+            return save(session);
+        }
+        throw new DataBaseException(String.format("User by id:%s not found",idUser));
     }
 
     public void invalidateSession(UUID id) {

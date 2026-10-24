@@ -6,15 +6,19 @@ import com.example.weather.exception.SessionExpiredException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
+import org.jspecify.annotations.Nullable;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-//@Component
-//@Transactional
-// implements HandlerInterceptor
-public class CookieHandlerInterceptor {
+@Component
+@Transactional
+public class CookieHandlerInterceptor implements HandlerInterceptor {
 
     private SessionService service;
 
@@ -22,15 +26,15 @@ public class CookieHandlerInterceptor {
         this.service = service;
     }
 
-  //  @Override
+   @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+
         final Optional<UUID> uuid = getUuid(request);
         if (uuid.isPresent()) {
             try {
-//                request.setAttribute("uuid", String.valueOf(uuid.get()));
                 final Session validSession = service.getValidSession(uuid.get());
-//                System.out.println(String.format("Cookies равен %s", String.valueOf(uuid.get())));
-//                request.setAttribute("user", new User("ivan", "123"));
+                final Long userId = validSession.getUser().getId();
+                request.setAttribute("userId", userId);
                 request.setAttribute("hello", String.format("The session expires at %d, minutes %d",
                         validSession.getExpiresAt().getHour(), validSession.getExpiresAt().getMinute()));
                 final Session prolongate = service.prolongate(validSession);
@@ -45,6 +49,15 @@ public class CookieHandlerInterceptor {
             return true;
         }
         throw new RuntimeException("uuid отсутствует");
+    }
+
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable ModelAndView modelAndView) throws Exception {
+        final Map<String, Object> model = modelAndView.getModel();
+        final Object uuid = model.get("uuid");
+        response.addCookie(new Cookie("id", String.valueOf(uuid)));
+        System.out.println();
+
     }
 
     private Optional<UUID> getUuid(HttpServletRequest request) {

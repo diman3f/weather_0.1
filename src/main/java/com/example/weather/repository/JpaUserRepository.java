@@ -14,7 +14,8 @@ public class JpaUserRepository implements UserRepository {
 
     @PersistenceContext
     private final EntityManager entityManager;
-    private final String hql = "FROM User WHERE login = :login";
+    private final static String FIND_BY_LOGIN = "FROM User WHERE login = :login";
+    private final static String FIND_BY_ID = "FROM User WHERE id = :id";
 
 
     public JpaUserRepository(EntityManager entityManager) {
@@ -38,19 +39,20 @@ public class JpaUserRepository implements UserRepository {
 
     }
 
-    @Override
-    public Optional<User> findById(Long key) {
-
-        return Optional.empty();
-    }
-
     public Optional<User> findByLoginUser(String login) {
-        final TypedQuery<User> query = entityManager.createQuery(hql, User.class);
+        final TypedQuery<User> query = entityManager.createQuery(FIND_BY_LOGIN, User.class);
         query.setParameter("login", login);
         final List<User> resultList = query.getResultList();
 
         return resultList.isEmpty() ? Optional.empty() : Optional.of(resultList.getFirst());
+    }
 
+    @Override
+    public Optional<User> findByIdUser(String id) {
+        final TypedQuery<User> query = entityManager.createQuery(FIND_BY_ID, User.class);
+        query.setParameter("id", id);
+        final List<User> resultList = query.getResultList();
+        return resultList.isEmpty() ? Optional.empty() : Optional.of(resultList.getFirst());
 
     }
 }
