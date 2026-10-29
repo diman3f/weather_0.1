@@ -19,7 +19,7 @@
 
     <div class="row justify-content-center">
         <div class="col-12 col-lg-4 col-md-6 col-sm-12">
-            <form action="/register" method="POST" enctype="application/x-www-form-urlencoded" class="mt-4">
+            <form action="/signUp" method="POST" enctype="application/x-www-form-urlencoded" class="mt-4">
                 <div class="mb-3">
                     <label for="username" class="form-label">Username</label>
                     <input type="text" class="form-control" id="username" name="username" required value=""/>
@@ -29,14 +29,14 @@
                     <input type="password" class="form-control" id="password" name="password" required value=""/>
                 </div>
                 <div class="mb-3">
-                    <label for="repeat-password" class="form-label">Repeat password</label>
-                    <input type="password" class="form-control" id="repeat-password" name="password" required value=""/>
+                    <label for="repeat_password" class="form-label">Repeat password</label>
+                    <input type="password" class="form-control" id="repeat_password" name="repeat_password" required value=""/>
                 </div>
 
-                <input type="hidden" name="redirect_to" value="/signInOpen"/>
+                <input type="hidden" name="redirect_to" value="/signIn"/>
 
                 <button type="submit" class="btn btn-primary w-100 mt-3">Sign Up</button>
-                <p class="mt-2 text-center">Already have an account? <a href="/signInOpen">Sign in here</a></p>
+                <p class="mt-2 text-center">Already have an account? <a href="/signIn">Sign in here</a></p>
             </form>
         </div>
     </div>

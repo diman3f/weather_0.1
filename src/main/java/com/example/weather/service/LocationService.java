@@ -1,8 +1,34 @@
 package com.example.weather.service;
 
+import com.example.weather.dto.LocationDto;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
+
+import java.net.URI;
+import java.util.List;
 
 @Service
 public class LocationService {
+    //api key 40ab87c7244af7c7389f0ec327868a2f
+    //40ab87c7244af7c7389f0ec327868a2f
+    public static String geoCoding = "http://api.openweathermap.org/geo/1.0/direct?q=%s,ru&limit=8&appid=40ab87c7244af7c7389f0ec327868a2f";
+    public static String getLocationByName = "https://api.openweathermap.org/data/2.5/weather?q=Samara&units=metric&appid=40ab87c7244af7c7389f0ec327868a2f";
+
+    public List<LocationDto> searchByName(String name) {
+        RestClient client = RestClient.create();
+        String uri = String.format(geoCoding, name);
+        final String jsonStr = client.get()
+                .uri(uri)
+                .retrieve()
+                .body(String.class);
+        ObjectMapper mapper = new ObjectMapper();
+        final List<LocationDto> locations = mapper.readValue(jsonStr, new TypeReference<List<LocationDto>>() {
+        });
+        return locations;
+
+
+    }
 
 }
