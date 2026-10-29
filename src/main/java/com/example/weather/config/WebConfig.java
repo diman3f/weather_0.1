@@ -4,8 +4,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.thymeleaf.spring6.SpringTemplateEngine;
@@ -46,17 +48,27 @@ public class WebConfig implements WebMvcConfigurer {
     public ThymeleafViewResolver viewResolver() {
         ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
         viewResolver.setTemplateEngine(templateEngine());
+        viewResolver.setCharacterEncoding("UTF-8");
         return viewResolver;
     }
-}
 
-//    @Override
-//    public void addInterceptors(InterceptorRegistry registry) {
-//        registry.addInterceptor(cookieHandlerInterceptor()).excludePathPatterns("/signIn", "/signInOpen", "/","/register");
-//    }
-//
-//    @Bean
-//  //  public HandlerInterceptor cookieHandlerInterceptor() {
-//        return new CookieHandlerInterceptor(context.getBean(SessionService.class));
-//    }
-//}
+
+
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        final InterceptorRegistration interceptorRegistration = registry.addInterceptor(cookieHandlerInterceptor());
+        ;
+        interceptorRegistration.excludePathPatterns
+                ("/signIn",
+                        "/signUp",
+                        "/",
+                        "/register"
+                        );
+    }
+
+    @Bean
+    public HandlerInterceptor cookieHandlerInterceptor() {
+        return new CookieHandlerInterceptor(context.getBean(SessionService.class));
+    }
+}
