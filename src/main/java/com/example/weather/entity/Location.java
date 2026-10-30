@@ -24,6 +24,8 @@ public class Location {
     @Column(nullable = false, length = 50)
     private String name;
     @Column(nullable = false)
+    private Long userId;
+    @Column(nullable = false)
     private Double latitude;
     @Column(nullable = false)
     private Double longitude;
@@ -33,4 +35,11 @@ public class Location {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "location_id"))
     List<User> users;
+
+    public Location(String name, Long userId, Double latitude, Double longitude) {
+        this.name = name;
+        this.userId = userId;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
 }
