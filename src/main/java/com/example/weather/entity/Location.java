@@ -23,7 +23,7 @@ public class Location {
     private Long id;
     @Column(nullable = false, length = 50)
     private String name;
-    @Column(nullable = false)
+    @Column(name = "user_id", nullable = false)
     private Long userId;
     @Column(nullable = false)
     private Double latitude;

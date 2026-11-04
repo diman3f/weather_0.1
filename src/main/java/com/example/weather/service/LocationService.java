@@ -31,4 +31,15 @@ public class LocationService {
 
     }
 
+    @Transactional
+    public void add(AddLocationRequest dto, Long userId) {
+        final Double latitude = dto.lat();
+        final Double longitude = dto.lon();
+
+        Location location = new Location(dto.name(),userId, latitude, longitude);
+
+        repository.save(location);
+
+        }
+
 }

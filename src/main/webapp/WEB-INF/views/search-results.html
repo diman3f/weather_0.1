@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <title>Weather Viewer – Homepage</title>
@@ -41,23 +41,28 @@
 
         <div>
             <h2>Locations:</h2>
-            <div class="row">
 
-                <div th:each = "location : ${locations}" class="col-12 col-lg-3 col-md-6 mb-4">
-                    <div class="card h-100">
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title" th:text = "${location.name}"></h5>
-                            <p class="card-text mb-1">Latitude: [[${location.lat}]]</p>
-                            <p class="card-text mb-1">Longitude:[[${location.lon}]]</p>
-                            <p class="card-text mb-1">Country: [[${location.country}]]</p>
-                            <p class="card-text mb-3">State: [[${location.state}]]</p>
-                            <div class="mt-auto">
-                                <button class="btn btn-primary w-100">Add</button>
+                <div class="row">
+                    <div th:each="location : ${locations}" class="col-12 col-lg-3 col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body d-flex flex-column">
+                                <form action="/location/add" method="post">
+                                <h5 class="card-title" th:text="${location.name}"></h5>
+                                <p class="card-text mb-1">Latitude: [[${location.lat}]]</p>
+                                <p class="card-text mb-1">Longitude:[[${location.lon}]]</p>
+                                <p class="card-text mb-1">Country: [[${location.country}]]</p>
+                                <p class="card-text mb-3">State: [[${location.state}]]</p>
+                                    <input type = "hidden" name ="name" value="Samara" th:value ="${location.name}"/>
+                                    <input type="hidden"  name="lat" value = Latitude th:value = "${location.lat}" />
+                                    <input type="hidden" name="lon" value="Longitude" th:value="${location.lon}" />
+                                <div class="mt-auto">
+                                    <button class="btn btn-primary w-100">Add</button>
+                                </div>
+                                </form>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
         </div>
     </div>
 </section>
