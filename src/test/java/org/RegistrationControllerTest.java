@@ -3,13 +3,13 @@ package org;
 import com.example.weather.controller.RegistrationController;
 import com.example.weather.dto.RegisterUserRequest;
 import com.example.weather.org.NoValidLoginException;
+import com.example.weather.service.RegistrationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import com.example.weather.service.RegistrationService;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -39,7 +39,7 @@ public class RegistrationControllerTest {
 
         private final String NoValidLogin = "User23";
         private final String something = " ";
-        RegisterUserRequest request = new RegisterUserRequest(NoValidLogin, something);
+        RegisterUserRequest request = new RegisterUserRequest(NoValidLogin, something, something);
 
         @Nested
         class WhenRequestRegistrationNotValid {
@@ -59,12 +59,7 @@ public class RegistrationControllerTest {
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
-
             }
         }
-
-
     }
-
-
 }
