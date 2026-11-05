@@ -17,11 +17,9 @@ import org.springframework.web.servlet.view.RedirectView;
 public class RegistrationController {
 
     private final RegistrationService userService;
-    private final SessionService sessionService;
 
-    public RegistrationController(RegistrationService userService, SessionService sessionService) {
+    public RegistrationController(RegistrationService userService) {
         this.userService = userService;
-        this.sessionService = sessionService;
     }
 
     @GetMapping(value = "/signUp")
