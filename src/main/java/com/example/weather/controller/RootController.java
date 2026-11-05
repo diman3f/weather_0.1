@@ -1,16 +1,15 @@
 package com.example.weather.controller;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
 public class RootController {
 
-    @RequestMapping(value = "/root", method = RequestMethod.GET)
-    public ModelAndView hello(ModelAndView model) {
-        model.setViewName("sign-up");
-        return model;
+    @GetMapping(value = "/")
+    public ModelAndView root(ModelAndView model) {
+        return new ModelAndView(new RedirectView("/signIn"));
     }
 }

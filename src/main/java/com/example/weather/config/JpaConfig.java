@@ -28,7 +28,7 @@ public class JpaConfig {
         config.setUsername("postgres");
         config.setPassword("admin"); //todo 04.07 эти данные необходимо вынести во внешний источник
         config.setDriverClassName("org.postgresql.Driver");
-        config.setSchema("test_schema");
+        config.setSchema("public");
 
         config.addDataSourceProperty("cachePrepStmts", "true");
         config.addDataSourceProperty("prepStmtCacheSize", "250");
@@ -42,7 +42,7 @@ public class JpaConfig {
     public Flyway flyway() {
         final FluentConfiguration configure = Flyway.configure();
         configure.dataSource(hikariDataSource()).load();
-        configure.schemas("test_schema");
+        configure.schemas("public");
         return new Flyway(configure);
     }
 
