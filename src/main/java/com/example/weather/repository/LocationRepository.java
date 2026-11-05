@@ -1,12 +1,6 @@
 package com.example.weather.repository;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import org.springframework.stereotype.Component;
+import com.example.weather.entity.Location;
 
-@Component
-@PersistenceContext
-public class LocationRepository {
-    private EntityManager entityManager;
-
+public interface LocationRepository extends Repository<Long, Location> {
 }
