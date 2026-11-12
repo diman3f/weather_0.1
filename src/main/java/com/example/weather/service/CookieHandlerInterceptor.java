@@ -51,14 +51,7 @@ public class CookieHandlerInterceptor implements HandlerInterceptor {
         throw new RuntimeException("uuid отсутствует");
     }
 
-    @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable ModelAndView modelAndView) throws Exception {
-        final Map<String, Object> model = modelAndView.getModel();
-        final Object uuid = model.get("uuid");
-        response.addCookie(new Cookie("id", String.valueOf(uuid)));
-        System.out.println();
 
-    }
 
     private Optional<UUID> getUuid(HttpServletRequest request) {
         final Cookie[] cookies = request.getCookies();

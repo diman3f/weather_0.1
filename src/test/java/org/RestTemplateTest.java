@@ -52,5 +52,22 @@ public class RestTemplateTest {
         List<LocationDto> locations = mapper.readValue(json, new TypeReference<List<LocationDto>>() {
         });
     }
+
+    @Test
+    public void givenLatLonCoordinateWhenRequestByCoordinateThenValidResponseCity() {
+        RestClient client = RestClient.create();
+        String name = "Самара";
+        String geocoding = "http://api.openweathermap.org/geo/1.0/direct?q=%s,ru&limit=8&appid=40ab87c7244af7c7389f0ec327868a2f";
+
+        String format = String.format(geocoding, name);
+        final String json = client.get()
+                .uri(format)
+                .retrieve()
+                .body(String.class);
+        System.out.println(json);
+        ObjectMapper mapper = new ObjectMapper();
+        List<LocationDto> locations = mapper.readValue(json, new TypeReference<List<LocationDto>>() {
+        });
+    }
 }
 

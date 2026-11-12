@@ -13,36 +13,38 @@ import java.util.List;
 @Setter
 @ToString
 public class WeatherDto {
-
-    private Main main;
-    private String name;
-    private List<Weather> weather;
-    private Sys sys;
+    private Location location;
+    private Current current;
 
 
     @Getter
     @Setter
     @ToString
-    static class Main {
-        private Double temp;
-        @JsonProperty("feels_like")
-        private Double feelsLike;
-        private Integer humidity;
-    }
-
-    @Getter
-    @Setter
-    @ToString
-    static class Weather {
-        private String main;
-        private String description;
-        private String icon;
-    }
-
-    @Getter
-    @Setter
-    @ToString
-    static class Sys {
+    public static class Location {
+        private String name;
         private String country;
     }
+
+    @Getter
+    @Setter
+    @ToString
+    public static class Current {
+        private Double temp_c;
+
+        @JsonProperty("feelslike_c")
+        private Double feelsLike;
+
+        private Integer humidity;
+
+        private Condition condition;
+
+        @Getter
+        @Setter
+        @ToString
+        public static class Condition {
+            private String text;
+            private String icon;
+        }
+    }
+
 }

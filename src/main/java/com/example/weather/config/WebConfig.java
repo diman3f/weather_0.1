@@ -1,20 +1,16 @@
 package com.example.weather.config;
 
+import com.example.weather.service.CookieHandlerInterceptor;
+import com.example.weather.service.SessionService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.*;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring6.view.ThymeleafViewResolver;
-import com.example.weather.service.CookieHandlerInterceptor;
-import com.example.weather.service.SessionService;
 
 @Configuration
 @ComponentScan("com.example.weather.controller")
@@ -53,7 +49,11 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
 
-
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/static/**")
+                .addResourceLocations("/static/");
+    }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -64,7 +64,7 @@ public class WebConfig implements WebMvcConfigurer {
                         "/signUp",
                         "/",
                         "/register"
-                        );
+                );
     }
 
     @Bean

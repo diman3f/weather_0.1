@@ -4,9 +4,10 @@ import com.example.weather.config.ApplicationConfig;
 import com.example.weather.config.FlyWayConfig;
 import com.example.weather.config.JpaConfig;
 import com.example.weather.config.WebConfig;
+import com.example.weather.dto.WeatherDto;
 import com.example.weather.entity.Location;
 import com.example.weather.repository.JpaLocationRepository;
-import com.example.weather.repository.UserRepository;
+import com.example.weather.service.LocationService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,6 +32,8 @@ public class LocationControllerTest {
 
     @Autowired
     private JpaLocationRepository repository;
+    @Autowired
+    private LocationService service;
 
 
     @BeforeEach
@@ -39,7 +42,7 @@ public class LocationControllerTest {
     }
 
     @Test
-    public void givenUserId_WhenFindLocationsByUserId_ThenReturnListLocation(){
+    public void givenUserId_WhenFindLocationsByUserId_ThenReturnListLocation() {
         Long userId = 64L;
         final List<Location> allLocationByUserId = repository.getAllLocationByUserId(userId);
         Assertions.assertEquals(allLocationByUserId.getFirst().getId(), 3);
@@ -47,5 +50,17 @@ public class LocationControllerTest {
         Assertions.assertNotNull(allLocationByUserId);
     }
 
-
+    @Test
+    public void givenLatLonCoordinateWhenGetWeatherByIdThenValidPage() {
+        final List<WeatherDto> list = service.searchWeatherByUserId(64L);
+        for (WeatherDto dto : list) {
+            System.out.println(dto.getLocation().getName());
+            System.out.println(dto.getLocation().getCountry());
+            System.out.println(dto.getCurrent().getTemp_c());
+            System.out.println(dto.getCurrent().getFeelsLike());
+            System.out.println(dto.getCurrent().getHumidity());
+            System.out.println(dto.getCurrent().getCondition().getIcon());
+            System.out.println(dto.getCurrent().getCondition().getText());
+        }
+    }
 }

@@ -10,8 +10,10 @@ import com.example.weather.dto.RegisterUserResponse;
 import com.example.weather.entity.User;
 import com.example.weather.exception.DataBaseException;
 import com.example.weather.repository.UserRepository;
-import com.example.weather.service.*;
-import jakarta.servlet.ServletContext;
+import com.example.weather.service.AuthUserService;
+import com.example.weather.service.JbCryptPasswordGenerator;
+import com.example.weather.service.RegistrationService;
+import com.example.weather.service.SessionService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,22 +56,6 @@ public class RegistrationControllerIntTest {
     @Autowired
     private AuthUserService authUserService;
 
-    //бизнес действие регистрация пользователя
-
-    //реализация действия
-    // сервис регистрации получает dto с данными для регистрации отваледированные
-    // сервис извлекает поля пароля и шифрует его
-    // сервис создает ентити логин + пароль для передачи на репозиторий
-    // репозиторий выполняет сохраняет сущность
-    // репозиторий отправляет entity c присвоенным id
-
-    // возможные сценарии теста
-    // данные логин не повторяется - успешная регистрация
-    // логин уже есть в бд - ошибка регистрации изменения системы нет
-    // репозиторий не доступен - ошибка регистрации
-
-    //
-
 
     @BeforeEach
     void configuration() {
@@ -104,18 +90,6 @@ public class RegistrationControllerIntTest {
 
         Assertions.assertTrue(actualMessage.contains(expectedMessage));
 
-    }
-
-
-    @Test
-    public void givenGetNameController_WhenMockMvcReturnNameController() {
-        ResourceLoader loader = new ResourceLoader();
-
-        final ServletContext servletContext = webApplicationContext.getServletContext();
-        final String s = loader.get();
-
-        Assertions.assertNotNull(s);
-        Assertions.assertNotNull(servletContext);
     }
 
 
@@ -165,9 +139,6 @@ public class RegistrationControllerIntTest {
 
     @Test
     public void givenUserLoginAndPassword_WhenSendPostRequestRegistration_ThenCreateSessionWithUserId() {
-        // подготовка mock mvc uri и параметры
-        // получить сессию
-        // проверить в сессии юзер id
         String name = "UserReg5dada65";
         String password = "somepassw4313";
         String redirect_to = "/index";
@@ -180,7 +151,7 @@ public class RegistrationControllerIntTest {
 
             final AuthUserResponse authUserResponse = authUserService.authenticateUser(name, password);
             Assertions.assertNotNull(authUserResponse);
-            Assertions.assertEquals(authUserResponse.name(),name);
+            Assertions.assertEquals(authUserResponse.name(), name);
 
             final Optional<User> byLoginUser = repository.findByLoginUser(name);
 
@@ -254,8 +225,6 @@ public class RegistrationControllerIntTest {
             Assertions.assertNotNull(mvcResult.getResponse().getCookie("uuid"));
             Assertions.assertNotNull(mvcResult.getModelAndView());
             Assertions.assertEquals(mvcResult.getResponse().getStatus(), 302);
-
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
