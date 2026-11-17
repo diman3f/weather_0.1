@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface LocationRepository extends Repository<Long, Location> {
     List<Location> getAllLocationByUserId(Long userId);
+    void deleteLocation(Long idLocation);
+    Location findById(Long id);
 }

@@ -1,9 +1,11 @@
 package com.example.weather.service;
 
 import com.example.weather.dto.AddLocationRequest;
+import com.example.weather.dto.LocationDeleteRequest;
 import com.example.weather.dto.LocationDto;
 import com.example.weather.dto.WeatherDto;
 import com.example.weather.entity.Location;
+import com.example.weather.exception.LocationByUserIdNotFound;
 import com.example.weather.repository.JpaLocationRepository;
 import com.example.weather.repository.LocationRepository;
 import org.springframework.stereotype.Service;
@@ -45,17 +47,24 @@ public class LocationService {
     }
 
     public List<WeatherDto> searchWeatherByUserId(Long userId) {
-        final List<Location> byUserId = getByUserId(userId);
-        //todo тут возникает LazyInitializationException по полю users
-        List<WeatherDto> list = new ArrayList<>();
-        for (Location location : byUserId) {
-            final WeatherDto weatherDto = searchByCoordinate(location.getLatitude(), location.getLongitude());
-            list.add(weatherDto);
-        }
-        return list;
+        final List<Location> locationByUserId = getByUserId(userId);
+        List<WeatherDto> weatherDtoList = new ArrayList<>();
+        if (!locationByUserId.isEmpty()) {
+            for (Location location : locationByUserId) {
+                final WeatherDto weatherDto = searchByCoordinate(location.getLatitude(), location.getLatitude());
+                weatherDto.setId(location.getId());
+                weatherDtoList.add(weatherDto);
+            }
+        } else throw new LocationByUserIdNotFound("Location by userId not found");
+        return weatherDtoList;
     }
 
-    //todo обернуть в optional
+    //todo тут возникает LazyInitializationException по полю users
+    //todo обернуть исключение
+    private List<Location> getByUserId(Long userId) {
+        return repository.getAllLocationByUserId(userId);
+    }
+
     private WeatherDto searchByCoordinate(Double lat, Double lon) {
         RestClient client = RestClient.create();
         String uri = String.format(getWeatherByCoordinates, lat, lon);
@@ -66,10 +75,18 @@ public class LocationService {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(jsonStr, WeatherDto.class);
     }
+    //todo обернуть в optional
 
-    //todo обернуть исключение
-    private List<Location> getByUserId(Long userId) {
-        return repository.getAllLocationByUserId(userId);
+
+    @Transactional
+    //todo обработка ошибки удаления
+    //todo добавил ид чтобы вернуть карточки погоды после удаления
+    //todo после удаления снова делаем цикл запросов к апи по хорошему нужен кеш хотябы запросов на 5
+    //todo обернуть в Optional
+    public List<WeatherDto> deleteLocation(LocationDeleteRequest dto, Long userId) {
+        repository.deleteLocation(dto.id());
+        final List<WeatherDto> weathers = searchWeatherByUserId(userId);
+        return weathers;
     }
 
     @Transactional
@@ -79,4 +96,6 @@ public class LocationService {
         Location location = new Location(dto.name(), userId, latitude, longitude);
         repository.save(location);
     }
+
+
 }

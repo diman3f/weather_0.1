@@ -13,6 +13,7 @@ import java.util.List;
 @Setter
 @ToString
 public class WeatherDto {
+    private Long id;
     private Location location;
     private Current current;
 
@@ -23,6 +24,8 @@ public class WeatherDto {
     public static class Location {
         private String name;
         private String country;
+        private Double lat;
+        private Double lon;
     }
 
     @Getter

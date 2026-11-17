@@ -63,7 +63,8 @@ public class WebConfig implements WebMvcConfigurer {
                 ("/signIn",
                         "/signUp",
                         "/",
-                        "/register"
+                        "/register",
+                        "/static/"
                 );
     }
 
