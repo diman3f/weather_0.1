@@ -7,16 +7,16 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 
 
-@ControllerAdvice("com/example/weather/controller")
+@ControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(RuntimeException.class)
-    public ModelAndView handlerGenericException(Exception ex, HttpServletResponse response) {
+    @ExceptionHandler(DataBaseException.class)
+    public ModelAndView handlerGenericException(RuntimeException ex, HttpServletResponse response) {
         final ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("error");
-        response.setHeader("code", "12332");
-        modelAndView.addObject("message", ex.getMessage());
+        response.setHeader("code", "500");
+        modelAndView.addObject("message", ex.getCause());
         return modelAndView;
     }
 

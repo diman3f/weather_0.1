@@ -8,6 +8,7 @@ import com.example.weather.entity.Location;
 import com.example.weather.exception.LocationByUserIdNotFound;
 import com.example.weather.repository.JpaLocationRepository;
 import com.example.weather.repository.LocationRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
@@ -16,7 +17,9 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+@Slf4j
 @Service
 public class LocationService {
     //api key 40ab87c7244af7c7389f0ec327868a2f
@@ -84,7 +87,10 @@ public class LocationService {
     //todo после удаления снова делаем цикл запросов к апи по хорошему нужен кеш хотябы запросов на 5
     //todo обернуть в Optional
     public List<WeatherDto> deleteLocation(LocationDeleteRequest dto, Long userId) {
-        repository.deleteLocation(dto.id());
+        final Optional<Location> location = repository.deleteLocation(dto.id(), userId);
+        if (location.isEmpty()) {
+            //todo записать сюда лог сообщения
+        }
         final List<WeatherDto> weathers = searchWeatherByUserId(userId);
         return weathers;
     }

@@ -1,9 +1,8 @@
 package com.example.weather.repository;
 
 import com.example.weather.entity.Location;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.TypedQuery;
+import com.example.weather.exception.DataBaseException;
+import jakarta.persistence.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -29,27 +28,31 @@ public class JpaLocationRepository implements LocationRepository {
     }
 
     @Override
-    public void deleteLocation(Long idLocation) {
-        final Location location = findById(idLocation);
-        if(location != null) {
-            entityManager.remove(location);
+    public Optional<Location> deleteLocation(Long idLocation, Long userId) {
+        try {
+            final Optional<Location> location = findById(idLocation, userId);
+            if (location.isPresent()) {
+                entityManager.remove(location.get());
+                return location;
+            }
+        } catch (NoResultException e) {
+            return Optional.empty();
+        } catch (PersistenceException e) {
+            throw new DataBaseException("Database is not available", e);
         }
+        return Optional.empty();
     }
 
-//todo обернуть в optional
+    //todo обернуть в optional
     @Override
-    public Location findById(Long id) {
-        return entityManager.find(Location.class, id);
-    }
-
-
-    public Optional<Location> find(Long id, Long userId) {
+    public Optional<Location> findById(Long id, Long userId) {
         final Location singleResult = entityManager.createQuery("SELECT e FROM Location e where e.id = :id and e.userId = :userId", Location.class)
                 .setParameter("id", id)
                 .setParameter("userId", userId)
                 .getSingleResult();
         return Optional.of(singleResult);
     }
+
 
     @Override
     public void delete(Location entity) {
